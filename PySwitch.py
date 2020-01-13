@@ -18,6 +18,7 @@ import yeelight
 from yeelight import Bulb
 global bedroom
 bedroom = Bulb(bedroom_ip)
+bedroom.start_music(port=5555)
 bedroom_data = bedroom.get_properties()
 
 
@@ -36,6 +37,10 @@ if bedroom_data['power']=='on':
     switch_fg = "black"
 
 light_switch_button = Button(window, text=switch_text, font=("fixedsys", 50), bg=switch_bg, fg=switch_fg)
+# exit button
+exit_button = Button(window, text=X, font=("fixedsys", 50), bg="red", fg="black")
+# brightness scale
+brightness_scale = Scale(window, from_=100, to=0)
 
 # setup functions for interaction
 def switch_update(bedroom_data):
@@ -74,13 +79,25 @@ def refresh():
         bedroom = Bulb(bedroom_ip)
     window.after(update_rate,refresh)
 
+def brightness_callback(b):
+    global bedroom
+    print(b)
+    #bedroom.set_brightness(b)
+    try:
+        bedroom.set_brightness(int(b))
+    except yeelight.main.BulbException:
+        bedroom = Bulb(bedroom_ip)
+
 
 
 # add functions to buttons
 light_switch_button.config(command=bedroom_toggle)
+exit_button.config(command=window.destroy)
+brightness_scale.config(command=brightness_callback)
 # place buttons & labels
-light_switch_button.grid(column=1,row=0)
-# TODO make exit button -> window.destroy
+light_switch_button.pack(anchor=CENTER)
+brightness_scale.pack(anchor=CENTER)
+exit_button.pack(anchor=CENTER)
 # update UI widgets periodically
 window.after(update_rate,refresh)
 window.mainloop()
