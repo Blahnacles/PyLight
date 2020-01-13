@@ -14,7 +14,9 @@ from tkinter import *
 bedroom_ip = "192.168.1.122"
 update_rate = 2000 # UI refresh rate in ms
 # TODO set static ip
+import yeelight
 from yeelight import Bulb
+global bedroom
 bedroom = Bulb(bedroom_ip)
 bedroom_data = bedroom.get_properties()
 
@@ -48,17 +50,30 @@ def switch_update(bedroom_data):
     light_switch_button.config(text=switch_text, bg=switch_bg, fg=switch_fg)
 
 def bedroom_toggle():
+    global bedroom
     # Toggles lights, formats button appropriately
     bedroom.toggle()
-    bedroom_data = bedroom.get_properties()
+    #bedroom_data = bedroom.get_properties()
+    if bedroom_data['power']=='on':
+        bedroom_data['power']='off'
+    else:
+        bedroom_data['power']='on'
     switch_update(bedroom_data)
+    
 
 def refresh():
+    global bedroom
     # periodic refresh function, to sync with mobile controllers
     # refresh for light switch:
-    bedroom_data = bedroom.get_properties()
-    switch_update(bedroom_data)
+    try:
+        bedroom_data = bedroom.get_properties()
+        switch_update(bedroom_data)
+    except yeelight.main.BulbException:
+        print("exception handled appropriately")
+        # reinstantiating bulb
+        bedroom = Bulb(bedroom_ip)
     window.after(update_rate,refresh)
+
 
 
 # add functions to buttons
