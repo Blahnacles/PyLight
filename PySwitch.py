@@ -25,7 +25,7 @@ bedroom_data = bedroom.get_properties()
 # setup window
 window = Tk()
 window.title("PySwitch")
-window.geometry('800x480')
+#window.geometry('800x480')
 
 # setup buttons & labels
 switch_text = "+"
@@ -41,6 +41,12 @@ light_switch_button = Button(window, text=switch_text, font=("fixedsys", 50), bg
 exit_button = Button(window, text=X, font=("fixedsys", 50), bg="red", fg="black")
 # brightness scale
 brightness_scale = Scale(window, from_=100, to=0)
+# blue button
+blue_button = Button(window, text="Blue", highlightbackground="blue", bg="blue")
+# white button
+white_button = Button(window, text="White", highlightbackground="white", bg="white")
+# red button
+red_button = Button(window, text="Red", highlightbackground="red", bg="red")
 
 # setup functions for interaction
 def switch_update(bedroom_data):
@@ -88,16 +94,29 @@ def brightness_callback(b):
     except yeelight.main.BulbException:
         bedroom = Bulb(bedroom_ip)
 
+def set_colour(r,g,b):
+    bedroom.turn_on()
+    bedroom.set_rgb(r,g,b)
+
 
 
 # add functions to buttons
 light_switch_button.config(command=bedroom_toggle)
 exit_button.config(command=window.destroy)
 brightness_scale.config(command=brightness_callback)
+red_button.config(command=lambda: set_colour(255,0,0))
+blue_button.config(command=lambda: set_colour(0,0,255))
+white_button.config(command=lambda: set_colour(255,255,255))
 # place buttons & labels
-light_switch_button.pack(anchor=CENTER)
-brightness_scale.pack(anchor=CENTER)
-exit_button.pack(anchor=CENTER)
+#light_switch_button.pack(anchor=CENTER)
+#brightness_scale.pack(anchor=CENTER)
+#exit_button.pack(anchor=CENTER)
+exit_button.grid(column=2,sticky=E)
+light_switch_button.grid(row=1,column=0, rowspan=3)
+brightness_scale.grid(row=1,column=1, rowspan=3)
+red_button.grid(row=1,column=2)
+blue_button.grid(row=2,column=2)
+white_button.grid(row=3,column=2)
 # update UI widgets periodically
 window.after(update_rate,refresh)
 window.mainloop()
