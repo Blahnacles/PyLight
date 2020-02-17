@@ -5,6 +5,8 @@ Created: 12/02/2020
 Updated: 12/02/2020
 Version: 0.0.1
 https://github.com/Blahnacles
+
+To access on local machine: http://192.168.1.106:5000/api
 """
 # imports
 from flask import Flask, jsonify, request, escape
