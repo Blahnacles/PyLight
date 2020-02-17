@@ -24,8 +24,8 @@ if bedroom.get_properties()['music_on']== '0':
 
 app = Flask(__name__)
 @app.route("/api", methods=['GET'])
-def get_status():
-    return json.dumps(bedroom.get_properties())
+def get_status(): 
+    return json.dumps(Bulb(bedroom_ip).get_properties())
 
 
 if __name__ == '__main__':
