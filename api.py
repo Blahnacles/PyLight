@@ -25,9 +25,25 @@ if bedroom.get_properties()['music_on']== '0':
 
 
 app = Flask(__name__)
-@app.route("/api", methods=['GET'])
-def get_status(): 
-    return json.dumps(Bulb(bedroom_ip).get_properties())
+@app.route("/api", methods=['GET','POST'])
+def handle():
+    if request.method == 'GET':
+        return json.dumps(Bulb(bedroom_ip).get_properties())
+    elif request.method == 'POST':
+        try:
+            bright = request.form['brightness']
+            if bright < 101 and bright > -1:
+                Bulb(bedroom_ip).set_brightness(int(bright))
+            elif bright is None:
+                app.logger.error('no brightness value received')
+        except:
+            app.logger.error('generic brightness error')
+        try:
+            if request.form['toggle'] is "true":
+                Bulb(bedroom_ip).toggle() 
+        except:
+            app.logger.error('generic toggle error')
+
 
 
 if __name__ == '__main__':
