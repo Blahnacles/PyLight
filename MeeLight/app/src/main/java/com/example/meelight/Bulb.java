@@ -27,6 +27,11 @@ public class Bulb {
             power = false;
         }
     }
+    public void setBrightness(int b) {
+        if (b>-1 && b<101) {
+            brightness = b;
+        }
+    }
     public boolean getPower() {
         return power;
     }

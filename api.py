@@ -27,22 +27,27 @@ if bedroom.get_properties()['music_on']== '0':
 app = Flask(__name__)
 @app.route("/api", methods=['GET','POST'])
 def handle():
+    responseBool = False
     if request.method == 'GET':
         return json.dumps(Bulb(bedroom_ip).get_properties())
     elif request.method == 'POST':
         try:
-            bright = request.form['brightness']
+            bright = int(request.form['brightness'])
             if bright < 101 and bright > -1:
                 Bulb(bedroom_ip).set_brightness(int(bright))
             elif bright is None:
                 app.logger.error('no brightness value received')
         except:
             app.logger.error('generic brightness error')
+            responseBool = True
+        # NB toggle must be added last to prevent brightness change from altering state
         try:
-            if request.form['toggle'] is "true":
-                Bulb(bedroom_ip).toggle() 
+            if request.form['toggle'] == "true":
+                Bulb(bedroom_ip).toggle()
         except:
             app.logger.error('generic toggle error')
+            responseBool = False
+        return '200 - success' if not responseBool else '400 - server error'
 
 
 
