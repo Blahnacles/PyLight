@@ -25,7 +25,7 @@ if bedroom.get_properties()['music_on']== '0':
 
 
 app = Flask(__name__)
-@app.route("/api", methods=['GET','POST'])
+@app.route("/api", methods=['GET','POST','PUT','DELETE'])
 def handle():
     responseBool = False
     if request.method == 'GET':
@@ -48,6 +48,26 @@ def handle():
             app.logger.error('generic toggle error')
             responseBool = False
         return '200 - success' if not responseBool else '400 - server error'
+    elif request.method == 'PUT':
+        try:
+            if request.form['toggle'] == "true":
+                Bulb(bedroom_ip).ensure_on()
+                bright = int(request.form['brightness'])
+                if bright < 101 and bright > -1:
+                    Bulb(bedroom_ip).set_brightness(bright)
+                # color settings go here
+            else:
+                try:
+                    Bulb(bedroom_ip).turn_off()
+                except:
+                    # bulb already off sends exception, not required to handle this
+                    pass
+    elif request.method == 'DELETE':
+        try:
+            Bulb(bedroom_ip).turn_off()
+        except:
+            pass
+
 
 
 
